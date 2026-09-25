@@ -29,7 +29,7 @@
     --bg:#050505;
     --bg-panel:#101110;
     --text:#f4f4f0;
-    --muted:#9c9a91;
+    --muted:#dfdfdf;
     --green:#00ff00;
     --line: rgba(244,244,240,0.14);
     --max: 1200px;
@@ -591,6 +591,43 @@
     color:rgba(244,244,240,0.7);
   }
 
+/* ---------- FLOATING WHATSAPP BUTTON ---------- */
+.wa-float {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+  z-index: 9999;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.wa-float:hover {
+  transform: scale(1.08);
+  background-color: #1ebe5d;
+}
+
+@media (max-width: 768px) {
+  .wa-float {
+    bottom: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
+  }
+  .wa-float svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
   /* ---------- WORK ---------- */
 
   .work{
@@ -657,6 +694,155 @@
     max-width:32ch;
     margin:0;
   }
+
+  /* ---------- HIGHLIGHT CARDS UI ---------- */
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 170px;
+    gap: 16px;
+    padding-bottom: 60px;
+  }
+
+  .h-card {
+    position: relative;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .h-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+  }
+
+  /* Grid Placements */
+  .h-card-sm {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  .h-card-lg {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  /* Abstract background patterns mimicking the image */
+  .h-card-bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .pattern-red { background: radial-gradient(circle at 80% 20%, #fff 2%, transparent 40%); }
+  .pattern-green { background: repeating-linear-gradient(45deg, transparent, transparent 10px, #fff 10px, #fff 12px); opacity: 0.08;}
+  .pattern-orange { background: radial-gradient(ellipse at 50% 50%, transparent 20%, #fff 150%); opacity: 0.2;}
+  .pattern-pink { background: radial-gradient(circle at 10% 90%, #fff 0%, transparent 60%); }
+  .pattern-blue { background: repeating-radial-gradient(circle at 100% 100%, transparent, transparent 20px, #fff 21px, transparent 22px); opacity: 0.1;}
+  .pattern-purple { background: repeating-linear-gradient(75deg, transparent, transparent 8px, #fff 8px, #fff 10px); opacity: 0.08;}
+
+  .h-card-top, .h-card-bottom {
+    position: relative;
+    z-index: 1;
+  }
+
+  .h-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .h-category {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+
+  /* Scalloped badge simulation */
+  .h-badge {
+    background: #ffffff;
+    width: 38px;
+    height: 38px;
+    border-radius: 40%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* Clip-path for a star/scallop look */
+    clip-path: polygon(50% 0%, 65% 10%, 82% 9%, 88% 25%, 100% 38%, 93% 54%, 97% 71%, 83% 81%, 74% 96%, 57% 93%, 43% 100%, 27% 92%, 13% 98%, 8% 82%, 0% 67%, 7% 51%, 0% 35%, 12% 23%, 17% 7%, 34% 9%);
+  }
+
+  .h-title {
+    font-family: 'Fraunces', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.4rem;
+    margin: 0 0 8px 0;
+    line-height: 1.1;
+  }
+  .lg-text {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+  }
+
+  .h-desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    opacity: 0.85;
+    margin: 0 0 14px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .lg-desc {
+    font-size: 1rem;
+    max-width: 90%;
+    margin-bottom: 24px;
+    -webkit-line-clamp: 4;
+  }
+
+  .h-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .h-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .highlight-grid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 180px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .highlight-grid {
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+    }
+    .h-card-sm, .h-card-lg {
+      grid-column: span 1;
+      grid-row: span 1;
+      min-height: 220px;
+    }
+    .lg-text { font-size: 1.8rem; }
+    .lg-desc { font-size: 0.85rem; }
+  } 
+
 
   /* ---------- STATEMENT ---------- */
 
@@ -787,6 +973,163 @@
     background:rgba(244,244,240,0.35);
     margin:0 9px;
     vertical-align:middle;
+  }
+
+/* ---------- WORK / FEATURES SECTION ---------- */
+  .work-features {
+    padding: 120px 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  /* Header Layout */
+  .wf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+  }
+
+  .wf-header-text {
+    max-width: 600px;
+  }
+
+  .wf-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .wf-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .wf-header-btn {
+    flex-shrink: 0;
+  }
+
+  /* Grid Layout */
+  .wf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  /* Individual Cards */
+  .wf-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .wf-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--green);
+  }
+
+  /* Highlighted Card Overrides */
+  .wf-card.highlight {
+    background: var(--green);
+    border-color: var(--green);
+    color: #050505;
+  }
+
+  .wf-card.highlight .wf-card-icon,
+  .wf-card.highlight .wf-card-title,
+  .wf-card.highlight .wf-card-text {
+    color: #050505;
+  }
+
+  .wf-card.highlight .wf-card-text {
+    opacity: 0.85;
+  }
+
+  .wf-card.highlight .wf-card-btn {
+    background: #050505;
+    color: var(--green);
+  }
+
+  .wf-card.highlight .wf-card-btn:hover {
+    background: #ffffff;
+    color: #050505;
+  }
+
+  /* Card Inner Elements */
+  .wf-card-icon {
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .wf-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+    color: var(--text);
+  }
+
+  .wf-card-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 32px 0;
+    flex-grow: 1; /* Pushes button to the bottom */
+  }
+
+  .wf-card-btn {
+    display: inline-block;
+    align-self: flex-start;
+    background: var(--bg);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .wf-card-btn:hover {
+    background: var(--green);
+    color: #050505;
+    border-color: var(--green);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1024px) {
+    .wf-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .wf-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .wf-grid {
+      grid-template-columns: 1fr;
+    }
+    .wf-card {
+      padding: 32px 24px;
+    }
   }
 
   /* ---------- SERVICES PAGE-TRANSITION (ring loader) ---------- */
@@ -1030,43 +1373,166 @@
 
   /* ---------- TESTIMONIALS ---------- */
 
-  .testimonials{
-    padding:110px 0;
-    border-bottom:1px solid var(--line);
+/* ---------- TESTIMONIALS (Staggered UI) ---------- */
+  .testimonials {
+    padding: 120px 0 160px; /* Extra bottom padding for overflowing cards */
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
   }
 
-  .testimonial-grid{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:24px;
+  .testi-wrapper {
+    position: relative;
+    background: var(--bg-panel);
+    border-radius: 32px;
+    padding: 80px 40px 180px; /* Massive bottom padding to cradle the cards */
+    text-align: center;
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
   }
 
-  .testimonial-card{
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    padding:32px;
-    display:flex;
-    flex-direction:column;
-    gap:28px;
-    justify-content:space-between;
+  .testi-bg-quote {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    color: rgba(244, 244, 240, 0.03);
+    transform: rotate(180deg);
+    pointer-events: none;
   }
 
-  .testimonial-quote{
-    font-size:1.02rem;
-    line-height:1.6;
-    margin:0;
+  .testi-header {
+    margin-bottom: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
-  .testimonial-person{
-    font-size:0.88rem;
-    color:var(--muted);
+  .testi-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: var(--text);
   }
 
-  .testimonial-person strong{
-    color:var(--text);
-    font-weight:500;
-    display:block;
-    margin-bottom:2px;
+  .testi-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--green);
+    border-radius: 2px;
+  }
+
+  .testi-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    /* This pulls the cards down to overlap the bottom of the wrapper */
+    margin-bottom: -240px; 
+    position: relative;
+    z-index: 2;
+  }
+
+  .testi-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Center card elevation logic */
+  .center-card {
+    transform: translateY(-40px);
+    border-color: rgba(0, 255, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 255, 0, 0.05), 0 12px 32px rgba(0,0,0,0.4);
+  }
+  
+  .side-card {
+    transform: translateY(20px);
+  }
+
+  .testi-card:hover {
+    border-color: var(--green);
+  }
+  .center-card:hover {
+    transform: translateY(-48px);
+  }
+  .side-card:hover {
+    transform: translateY(12px);
+  }
+
+  .testi-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--muted);
+  }
+
+  .testi-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin: 0 0 4px;
+    color: var(--text);
+  }
+
+  .testi-role {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .testi-content {
+    position: relative;
+  }
+
+  .card-quote-icon {
+    color: rgba(244, 244, 240, 0.06);
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    z-index: 0;
+  }
+
+  .testi-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(244, 244, 240, 0.85);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .testi-track {
+      grid-template-columns: 1fr;
+      margin-bottom: -120px;
+      gap: 24px;
+    }
+    .center-card, .side-card {
+      transform: none !important; /* Disable vertical stagger on mobile */
+    }
+    .testi-wrapper {
+      padding: 60px 24px 140px;
+    }
+    .testi-bg-quote {
+      display: none;
+    }
   }
 
   /* ---------- CTA ---------- */
@@ -1725,97 +2191,118 @@
         </div>
       </div>
     </div>
-
-    <div class="hero-marquee" aria-hidden="true">
-      <div class="marquee-track">
-        <span>Brand Strategy</span><span class="dot">•</span>
-        <span>Advertising</span><span class="dot">•</span>
-        <span>Creative Direction</span><span class="dot">•</span>
-        <span>Digital Campaigns</span><span class="dot">•</span>
-        <span>Content Design</span><span class="dot">•</span>
-        <span>Motion</span><span class="dot">•</span>
-        <span>Web Design</span><span class="dot">•</span>
-        <span>Brand Strategy</span><span class="dot">•</span>
-        <span>Advertising</span><span class="dot">•</span>
-        <span>Creative Direction</span><span class="dot">•</span>
-        <span>Digital Campaigns</span><span class="dot">•</span>
-        <span>Content Design</span><span class="dot">•</span>
-        <span>Motion</span><span class="dot">•</span>
-        <span>Web Design</span><span class="dot">•</span>
-      </div>
-    </div>
-
-    <a href="#work" class="hero-scroll-cue" aria-label="Scroll to work">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
-    </a>
-
-    <div class="hero-strip">
-      <p class="hero-strip-quote">"Good design gets seen.<br>Iconic design commands the market."</p>
-
-      <div class="hero-strip-stats">
-        <div>
-          <span class="stat-num">•</span>
-          <span class="stat-label">BRAND IDENTITY</span>
-        </div>
-        <div>
-          <span class="stat-num">•</span>
-          <span class="stat-label">AD CREATIVES</span>
-        </div>
-        <div>
-          <span class="stat-num">•</span>
-          <span class="stat-label">VIDEO & MOTION</span>
-        </div>
-        <div>
-          <span class="stat-num">•</span>
-          <span class="stat-label">COMMERCIAL SHOOTS</span>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ================= WORK ================= -->
-  <section class="work" id="work">
+ <section class="work" id="work">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="eyebrow-row">
-            <span class="eyebrow-dot"></span>
-            <span>Selected work</span>
-          </div>
-          <h2 class="section-title">Visuals with velocity. Proof of our craft.</h2>
+          <h2 class="section-title">Our Core Services</h2>
         </div>
-        <p class="section-note">A snapshot of recent brand assets, campaign creatives, and digital productions designed to drive real results. Let’s make your business the next one on this list.</p>
       </div>
 
-      <div class="work-grid">
-        <div class="work-item tall" style="background:linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.92) 100%),url('f6.webp') center/cover no-repeat;">
-          <p class="work-item-cat">Brand Identity</p>
-          <h3 class="work-item-name">XYZ</h3>
-          <p class="work-item-desc">Complete luxury identity system, minimalist monogram, and packaging aesthetic built for high-end cosmetics.</p>
+      <div class="highlight-grid">
+        <!-- Card 1: Small -->
+        <div class="h-card h-card-sm" style="background-color: #D36C6C;">
+          <div class="h-card-bg-pattern pattern-red"></div>
+          <div class="h-card-top">
+            <span class="h-category">Brand Identity</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D36C6C" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12l2-2m0 0l-2-2m2 2H5m0 0l2-2m-2 2l2 2"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title">Branding & Rebranding</h3>
+            <p class="h-desc">Build a new brand or transform an existing one.</p>
+            <div class="h-stats">
+            </div>
+          </div>
         </div>
 
-        <div class="work-item" style="background:linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.92) 100%),url('f3.webp') center/cover no-repeat;">
-          <p class="work-item-cat">Meta Ads & UI/UX</p>
-          <h3 class="work-item-name">ZYX</h3>
-          <p class="work-item-desc">High-converting fintech ad creatives and structured landing screens engineered for investor acquisition.</p>
+        <!-- Card 2: Small -->
+        <div class="h-card h-card-sm" style="background-color: #3B927B;">
+          <div class="h-card-bg-pattern pattern-green"></div>
+          <div class="h-card-top">
+            <span class="h-category">Social Creative</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B927B" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title">Social Media Design</h3>
+            <p class="h-desc">Create consistent, high-quality content that makes brands look active and professional.</p>
+            <div class="h-stats">
+            </div>
+          </div>
         </div>
 
-        <div class="work-item" style="background:linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.92) 100%),url('f2.webp') center/cover no-repeat;">
-          <p class="work-item-cat">Product & Commercial Shoot</p>
-          <h3 class="work-item-name">XYZ</h3>
-          <p class="work-item-desc">Studio lighting setups, luxury fragrance bottle staging, and high-detail commercial campaign photography.</p>
+        <!-- Card 3: Large (Spans 2 columns & 2 rows) -->
+        <div class="h-card h-card-lg" style="background-color: #DA8536;">
+          <div class="h-card-bg-pattern pattern-orange"></div>
+          <div class="h-card-top">
+            <span class="h-category">Ad Campaigns</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DA8536" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title lg-text">Advertising & Performance Creative</h3>
+            <p class="h-desc lg-desc">Design ads and creative assets focused on attention, engagement and conversions.</p>
+            <div class="h-stats">
+            </div>
+          </div>
         </div>
 
-        <div class="work-item" style="background:linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.92) 100%),url('f4.webp') center/cover no-repeat;">
-          <p class="work-item-cat">Poster & Creative Design</p>
-          <h3 class="work-item-name">ZYX</h3>
-          <p class="work-item-desc">High-impact traditional food poster series balancing rich heritage typography with bold, modern layout hierarchy.</p>
+        <!-- Card 4: Large (Spans 2 columns & 2 rows) -->
+        <div class="h-card h-card-lg" style="background-color: #D765A2;">
+          <div class="h-card-bg-pattern pattern-pink"></div>
+          <div class="h-card-top">
+            <span class="h-category">Web & UI</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D765A2" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title lg-text">Website & Landing Pages</h3>
+            <p class="h-desc lg-desc">Design modern websites and landing pages that turn visitors into customers.</p>
+            <div class="h-stats">
+            </div>
+          </div>
         </div>
 
-        <div class="work-item" style="background:linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.92) 100%),url('f5.webp') center/cover no-repeat;">
-          <p class="work-item-cat">Video Editing & Motion</p>
-          <h3 class="work-item-name">XYZ</h3>
-          <p class="work-item-desc">Dynamic short-form video cuts, kinetic typographic stingers, and growth-focused educational motion graphics.</p>
+        <!-- Card 5: Small -->
+        <div class="h-card h-card-sm" style="background-color: #5875DF;">
+          <div class="h-card-bg-pattern pattern-blue"></div>
+          <div class="h-card-top">
+            <span class="h-category">Visual Content</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5875DF" stroke-width="2"><path d="M12 2v20m-7-7h14m-14-6h14"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title">Content Production</h3>
+            <p class="h-desc">Produce graphics, motion, video, product visuals and campaign content for brands.</p>
+            <div class="h-stats">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6: Small -->
+        <div class="h-card h-card-sm" style="background-color: #795CE0;">
+          <div class="h-card-bg-pattern pattern-purple"></div>
+          <div class="h-card-top">
+            <span class="h-category">Design Systems</span>
+            <div class="h-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#795CE0" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4l3 3"/></svg>
+            </div>
+          </div>
+          <div class="h-card-bottom">
+            <h3 class="h-title">Marketing Design Systems</h3>
+            <p class="h-desc">Reusable creative systems for rapid, consistent brand communication.</p>
+            <div class="h-stats">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1827,102 +2314,67 @@
       <div class="statement-inner">
         <p class="statement-text">We don't just decorate businesses until they look nice. We build them until they command the room.</p>
         <div class="statement-aside">
-          <p>At Iconio, strategy, high-velocity design, and commercial production align directly. From the core visual identity to conversion-driven ads, every asset is engineered to build lasting brand recall without agency overhead.</p>
-          <a href="#services" class="link-secondary">See our process</a>
+          <p>We believe that great design is inherently strategic. At Iconio, we align high-velocity design with commercial production to ensure your brand doesn't just look good, but actually performs. Whether we are crafting your foundational visual identity or scaling up conversion-driven ads, every asset is meticulously engineered to build lasting brand recall and drive real results without the unnecessary agency overhead.</p>
         </div>
       </div>
     </div>
   </section>
   <!-- ================= SERVICES ================= -->
-  <section class="services" id="services">
+ 
+  <section class="work-features" id="work">
     <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow-row">
-            <span class="eyebrow-dot"></span>
-            <span>What we do</span>
-          </div>
-          <h2 class="section-title">Everything your brand needs to command attention and scale.</h2>
+      
+      <!-- Top Header Row -->
+      <div class="wf-header">
+        <div class="wf-header-text">
+          <h2 class="wf-title">Why Choose Iconio?</h2>
+          <p class="wf-desc">Our commitment to your brand goes beyond just aesthetics and quick edits. Discover the unique benefits that set us apart and ensure you have the best experience scaling your business.</p>
         </div>
       </div>
 
-      <div class="services-intro">
-        <p data-reveal>Aesthetics attract, but clarity and recall drive revenue. We engineer complete visual systems—from sharp posters and high-retention video edits to studio-grade shoots—so your business looks authoritative and impossible to scroll past.</p>
-        <p data-reveal>End-to-end creative execution under one freelance lead. Design, video editing, social strategy, shoots, and Meta ad campaigns built together, ensuring zero miscommunication, rapid turnaround, and consistent brand velocity.</p>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 18L18 6M18 6H10M18 6v8"/></svg>
-            <h3 class="service-card-name">Brand<br>Identity</h3>
+      <!-- 4-Column Grid -->
+      <div class="wf-grid">
+        
+        <!-- Card 1 (Highlighted / Inverted) -->
+        <div class="wf-card">
+          <div class="wf-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <p class="service-card-tags">Logo design<span class="dot"></span>Colour palette<span class="dot"></span>Typography<span class="dot"></span>Iconography<span class="dot"></span>Brand guidelines<span class="dot"></span>Style guides</p>
+          <h3 class="wf-card-title">Brand<br>Identity</h3>
+          <p class="wf-card-text">Recognition<br>Build a distinctive visual identity that makes your brand instantly recognizable across every touchpoint.</p>
+          <a href="#contact" class="wf-card-btn">Let’s Create</a>
         </div>
 
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 6l16 12M20 6L4 18"/></svg>
-            <h3 class="service-card-name">Poster &amp; Creative<br>Design</h3>
+        <!-- Card 2 -->
+        <div class="wf-card">
+          <div class="wf-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7h-3a2 2 0 01-2-2V2"/><path d="M9 18a2 2 0 01-2-2V4a2 2 0 012-2h7l4 4v10a2 2 0 01-2 2H9z"/><path d="M3 15h6"/><path d="M3 18h6"/><path d="M3 12h2"/></svg>
           </div>
-          <p class="service-card-tags">Promotional creatives<span class="dot"></span>Ad posters<span class="dot"></span>Campaign layouts<span class="dot"></span>Social ad creative</p>
+          <h3 class="wf-card-title">Digital<br>Presence</h3>
+          <p class="wf-card-text">Experience<br>Create digital experiences that make your brand feel consistent, considered and memorable from the first interaction.</p>
+          <a href="#contact" class="wf-card-btn">Build With Us</a>
         </div>
 
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="8"/></svg>
-            <h3 class="service-card-name">Packaging &amp; Print<br>Collateral</h3>
+        <!-- Card 3 -->
+        <div class="wf-card">
+          <div class="wf-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
-          <p class="service-card-tags">Product packaging<span class="dot"></span>Label stickers<span class="dot"></span>Print menus<span class="dot"></span>Stationery<span class="dot"></span>Print-ready files</p>
+          <h3 class="wf-card-title">Creative<br>Direction</h3>
+          <p class="wf-card-text">Expression<br>Turn ideas into a clear visual language through art direction, typography, composition, colour and creative thinking.</p>
+          <a href="#contact" class="wf-card-btn">Shape Your Brand</a>
         </div>
 
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 15c2-6 6-10 8-10s6 4 8 10"/></svg>
-            <h3 class="service-card-name">UI/UX<br>Design</h3>
+        <!-- Card 4 -->
+        <div class="wf-card">
+          <div class="wf-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
           </div>
-          <p class="service-card-tags">Website interfaces<span class="dot"></span>Landing pages<span class="dot"></span>App mockups<span class="dot"></span>Wireframes &amp; flows</p>
+          <h3 class="wf-card-title">Campaigns<br>Marketing</h3>
+          <p class="wf-card-text">Attention<br>Develop high-impact creative campaigns designed to capture attention, communicate value and keep your brand remembered.</p>
+          <a href="#contact" class="wf-card-btn">Bring It to Life</a>
         </div>
 
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l9 6-9 6-9-6 9-6z"/></svg>
-            <h3 class="service-card-name">Product<br>Photography</h3>
-          </div>
-          <p class="service-card-tags">Commercial lighting<span class="dot"></span>Product staging<span class="dot"></span>Photo shoots<span class="dot"></span>Retouching</p>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1"/></svg>
-            <h3 class="service-card-name">Video Creation<br>&amp; Editing</h3>
-          </div>
-          <p class="service-card-tags">Short-form video<span class="dot"></span>Reels &amp; Shorts<span class="dot"></span>Commercial cuts<span class="dot"></span>Colour grading</p>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M18 6l-3 3M6 18l3-3M18 18l-3-3"/></svg>
-            <h3 class="service-card-name">Motion Graphics<br>&amp; 2D Animation</h3>
-          </div>
-          <p class="service-card-tags">Kinetic typography<span class="dot"></span>Logo stings<span class="dot"></span>Animated ads<span class="dot"></span>Transition effects</p>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12a8 8 0 1116 0"/></svg>
-            <h3 class="service-card-name">Social Media<br>Management</h3>
-          </div>
-          <p class="service-card-tags">Content scheduling<span class="dot"></span>Grid curation<span class="dot"></span>Caption writing<span class="dot"></span>Platform distribution</p>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-visual">
-            <svg class="service-card-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l2.6 6.9L22 9l-5.4 5 1.5 7.1L12 17.8 5.9 21.1 7.4 14 2 9l7.4-.1L12 2z"/></svg>
-            <h3 class="service-card-name">Thumbnails</h3>
-          </div>
-          <p class="service-card-tags">YouTube covers<span class="dot"></span>Social video covers<span class="dot"></span>High-CTR design<span class="dot"></span>Cover concepts</p>
-        </div>
       </div>
     </div>
   </section>
@@ -1970,41 +2422,60 @@
   </section>
 
   <!-- ================= TESTIMONIALS ================= -->
-  <section class="testimonials">
+<section class="testimonials" id="testimonials">
     <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow-row">
-            <span class="eyebrow-dot"></span>
-            <span>Reviews</span>
-          </div>
-          <h2 class="section-title">What it's like to build with Iconio.</h2>
-        </div>
-      </div>
+      <div class="testi-wrapper">
+        <!-- Decorative Background Quotes -->
+        <svg class="testi-bg-quote" width="120" height="120" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M14 17h3l2-4V7h-6v6h3M6 17h3l2-4V7H5v6h3"/>
+        </svg>
 
-      <div class="testimonial-grid">
-        <div class="testimonial-card">
-          <p class="testimonial-quote">Iconio completely redefined our visual presence. Instead of generic templates, we got a sleek, authoritative identity system that made our brand look established from day one.</p>
-          <div class="testimonial-person">
-            <strong>Arjun Menon</strong>
-            Founder, XYZ
-          </div>
+        <div class="testi-header">
+          <h2 class="testi-title">What our Clients say!</h2>
+          <div class="testi-divider"></div>
         </div>
 
-        <div class="testimonial-card">
-          <p class="testimonial-quote">The monthly content calendar and creatives transformed our feed. Our engagement surged, the designs stop the scroll instantly, and direct communication made execution seamless.</p>
-          <div class="testimonial-person">
-            <strong>Kavya Nair</strong>
-            Growth Lead, ZYX
+        <div class="testi-track">
+          
+          <!-- Left Card -->
+          <div class="testi-card side-card">
+            <div class="testi-avatar">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h4 class="testi-name">Arjun Menon</h4>
+            <span class="testi-role">Founder, XYZ</span>
+            <div class="testi-content">
+              <svg class="card-quote-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 17h3l2-4V7h-6v6h3M6 17h3l2-4V7H5v6h3"/></svg>
+              <p>Iconio completely redefined our visual presence. Instead of generic templates, we got a sleek, authoritative identity system that made our brand look established from day one.</p>
+            </div>
           </div>
-        </div>
 
-        <div class="testimonial-card">
-          <p class="testimonial-quote">Fast, sharp, and conversion-focused. The ad creatives and short-form video edits they delivered lowered our acquisition costs and actually drove qualified sales.</p>
-          <div class="testimonial-person">
-            <strong>Rohan Varma</strong>
-            Director, XYZ
+          <!-- Center Elevated Card -->
+          <div class="testi-card center-card">
+            <div class="testi-avatar">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h4 class="testi-name">Kavya Nair</h4>
+            <span class="testi-role">Growth Lead, ZYX</span>
+            <div class="testi-content">
+              <svg class="card-quote-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 17h3l2-4V7h-6v6h3M6 17h3l2-4V7H5v6h3"/></svg>
+              <p>The monthly content calendar and creatives transformed our feed. Our engagement surged, the designs stop the scroll instantly, and direct communication made execution seamless.</p>
+            </div>
           </div>
+
+          <!-- Right Card -->
+          <div class="testi-card side-card">
+            <div class="testi-avatar">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h4 class="testi-name">Rohan Varma</h4>
+            <span class="testi-role">Director, XYZ</span>
+            <div class="testi-content">
+              <svg class="card-quote-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 17h3l2-4V7h-6v6h3M6 17h3l2-4V7H5v6h3"/></svg>
+              <p>Fast, sharp, and conversion-focused. The ad creatives and short-form video edits they delivered lowered our acquisition costs and actually drove qualified sales.</p>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -2124,6 +2595,13 @@
   <div class="blob-transition" id="blobTransition" aria-hidden="true">
     <div class="blob-transition-circle"></div>
   </div>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/917593908806?text=Hi%20Iconio!%20I'd%20like%20to%20start%20a%20project." target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.663-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
 
   <!-- ================= WORK SHUTTER TRANSITION ================= -->
   <div class="shutter-transition" id="shutterTransition" aria-hidden="true">
