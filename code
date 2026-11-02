@@ -1,0 +1,378 @@
+<dependencies>
+    <!-- Web REST API -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- JPA & Database Persistence -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+
+    <!-- Jackson for JSON handling -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+    </dependency>
+</dependencies>
+
+server.port=8080
+spring.application.name=gemini-chatbot
+
+# H2 Database settings (Data stored in local file ./chatdb.mv.db)
+spring.datasource.url=jdbc:h2:file:./data/chatdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
+
+# Gemini API Key (Pass through environment variable or set here)
+gemini.api.key=${GEMINI_API_KEY}
+gemini.api.model=gemini-2.5-flash
+
+package com.example.chatbot.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "chat_messages")
+public class ChatMessage {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String sessionId;
+
+    @Column(nullable = false)
+    private String role; // "user" or "model"
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
+
+    private LocalDateTime createdAt;
+
+    public ChatMessage() {}
+
+    public ChatMessage(String sessionId, String role, String content) {
+        this.sessionId = sessionId;
+        this.role = role;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Long getId() { return id; }
+    public String getSessionId() { return sessionId; }
+    public String getRole() { return role; }
+    public String getContent() { return content; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+}
+
+package com.example.chatbot.repository;
+
+import com.example.chatbot.entity.ChatMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
+
+    List<ChatMessage> findBySessionIdOrderByCreatedAtAsc(String sessionId);
+
+    @Query("SELECT DISTINCT m.sessionId FROM ChatMessage m ORDER BY m.sessionId DESC")
+    List<String> findDistinctSessionIds();
+}
+
+package com.example.chatbot.service;
+
+import com.example.chatbot.entity.ChatMessage;
+import com.example.chatbot.repository.ChatMessageRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class GeminiChatService {
+
+    @Value("${gemini.api.key}")
+    private String apiKey;
+
+    @Value("${gemini.api.model:gemini-2.5-flash}")
+    private String model;
+
+    private final ChatMessageRepository messageRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    public GeminiChatService(ChatMessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
+    public String sendMessage(String sessionId, String userPrompt) throws Exception {
+        // 1. Fetch conversation history for this session
+        List<ChatMessage> history = messageRepository.findBySessionIdOrderByCreatedAtAsc(sessionId);
+
+        // 2. Build Gemini contents payload containing full history + new message
+        List> contents = new ArrayList<>();
+        for (ChatMessage msg : history) {
+            contents.add(Map.of(
+                "role", msg.getRole(),
+                "parts", List.of(Map.of("text", msg.getContent()))
+            ));
+        }
+
+        contents.add(Map.of(
+            "role", "user",
+            "parts", List.of(Map.of("text", userPrompt))
+        ));
+
+        Map<String, Object> requestBody = Map.of("contents", contents);
+        String jsonPayload = objectMapper.writeValueAsString(requestBody);
+
+        // 3. Dispatch to Gemini REST API endpoint
+        String url = String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, apiKey);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // 4. Parse AI output
+        JsonNode rootNode = objectMapper.readTree(response.body());
+        
+        if (rootNode.has("error")) {
+            throw new RuntimeException("Gemini API Error: " + rootNode.get("error").get("message").asText());
+        }
+
+        String aiResponse = rootNode.path("candidates").get(0)
+                .path("content").path("parts").get(0)
+                .path("text").asText();
+
+        // 5. Persist both the user prompt and the AI reply in DB
+        messageRepository.save(new ChatMessage(sessionId, "user", userPrompt));
+        messageRepository.save(new ChatMessage(sessionId, "model", aiResponse));
+
+        return aiResponse;
+    }
+}
+
+package com.example.chatbot.controller;
+
+import com.example.chatbot.entity.ChatMessage;
+import com.example.chatbot.repository.ChatMessageRepository;
+import com.example.chatbot.service.GeminiChatService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/chat")
+@CrossOrigin(origins = "*")
+public class ChatController {
+
+    private final GeminiChatService chatService;
+    private final ChatMessageRepository messageRepository;
+
+    public ChatController(GeminiChatService chatService, ChatMessageRepository messageRepository) {
+        this.chatService = chatService;
+        this.messageRepository = messageRepository;
+    }
+
+    // Send a message within a session
+    @PostMapping("/{sessionId}")
+    public Map<String, String> chat(@PathVariable String sessionId, @RequestBody Map<String, String> body) {
+        try {
+            String prompt = body.get("message");
+            String reply = chatService.sendMessage(sessionId, prompt);
+            return Map.of("reply", reply);
+        } catch (Exception e) {
+            return Map.of("error", e.getMessage());
+        }
+    }
+
+    // Retrieve full saved conversation for a session
+    @GetMapping("/{sessionId}")
+    public List<ChatMessage> getSessionMessages(@PathVariable String sessionId) {
+        return messageRepository.findBySessionIdOrderByCreatedAtAsc(sessionId);
+    }
+
+    // Retrieve all active session IDs for the sidebar
+    @GetMapping("/sessions")
+    public List<String> getSessions() {
+        return messageRepository.findDistinctSessionIds();
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemini Workspace</title>
+  <style>
+    :root {
+      --bg-dark: #0b0d11;
+      --sidebar-bg: #11141c;
+      --card-bg: #1a1e28;
+      --accent: #7c3aed;
+      --accent-hover: #6d28d9;
+      --text-main: #f3f4f6;
+      --text-dim: #9ca3af;
+      --border: #262b36;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    .sidebar-header { padding: 18px; border-bottom: 1px solid var(--border); }
+    .new-btn { width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .new-btn:hover { background: var(--accent); color: #fff; }
+    .session-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .session-item { padding: 10px 12px; border-radius: 6px; font-size: 0.88rem; cursor: pointer; color: var(--text-dim); transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .session-item:hover, .session-item.active { background-color: var(--card-bg); color: var(--text-main); }
+
+    /* Main Chat Container */
+    .chat-view { flex: 1; display: flex; flex-direction: column; height: 100%; }
+    .chat-header { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; font-weight: 600; }
+    .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    
+    .bubble { max-width: 75%; padding: 14px 18px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .bubble.user { align-self: flex-end; background-color: var(--accent); color: #fff; border-bottom-right-radius: 2px; }
+    .bubble.model { align-self: flex-start; background-color: var(--card-bg); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+
+    /* Input Bar */
+    .input-bar { padding: 16px 24px; border-top: 1px solid var(--border); background-color: var(--sidebar-bg); display: flex; gap: 12px; }
+    .input-bar input { flex: 1; padding: 12px 16px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
+    .input-bar input:focus { border-color: var(--accent); }
+    .input-bar button { padding: 0 20px; background-color: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .input-bar button:hover { background-color: var(--accent-hover); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <button class="new-btn" onclick="startNewChat()">+ New Session</button>
+    </div>
+    <div class="session-list" id="sessionList"></div>
+  </aside>
+
+  <main class="chat-view">
+    <header class="chat-header" id="chatTitle">Session: Default</header>
+    <div class="messages-container" id="messagesArea"></div>
+    <form class="input-bar" id="chatForm">
+      <input type="text" id="promptInput" placeholder="Ask Gemini..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:8080/api/chat";
+    let currentSessionId = localStorage.getItem("active_session") || "session-" + Date.now();
+
+    function renderMessage(content, role) {
+      const area = document.getElementById("messagesArea");
+      const div = document.createElement("div");
+      div.className = `bubble ${role}`;
+      div.textContent = content;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    async function loadSessions() {
+      try {
+        const res = await fetch(`${API_BASE}/sessions`);
+        const sessions = await res.json();
+        const list = document.getElementById("sessionList");
+        list.innerHTML = "";
+        
+        sessions.forEach(sid => {
+          const item = document.createElement("div");
+          item.className = `session-item ${sid === currentSessionId ? 'active' : ''}`;
+          item.textContent = sid;
+          item.onclick = () => switchSession(sid);
+          list.appendChild(item);
+        });
+      } catch (e) {
+        console.error("Could not load sessions", e);
+      }
+    }
+
+    async function switchSession(sid) {
+      currentSessionId = sid;
+      localStorage.setItem("active_session", sid);
+      document.getElementById("chatTitle").textContent = "Session: " + sid;
+      document.getElementById("messagesArea").innerHTML = "";
+      
+      const res = await fetch(`${API_BASE}/${sid}`);
+      const messages = await res.json();
+      messages.forEach(msg => renderMessage(msg.content, msg.role));
+      loadSessions();
+    }
+
+    function startNewChat() {
+      const newSid = "session-" + Date.now();
+      switchSession(newSid);
+    }
+
+    document.getElementById("chatForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("promptInput");
+      const prompt = input.value.trim();
+      if (!prompt) return;
+
+      renderMessage(prompt, "user");
+      input.value = "";
+
+      try {
+        const res = await fetch(`${API_BASE}/${currentSessionId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: prompt })
+        });
+        const data = await res.json();
+        if (data.reply) {
+          renderMessage(data.reply, "model");
+          loadSessions();
+        } else {
+          renderMessage("Error: " + (data.error || "No reply"), "model");
+        }
+      } catch (err) {
+        renderMessage("Connection error to Java backend.", "model");
+      }
+    });
+
+    // Initial load
+    switchSession(currentSessionId);
+  </script>
+</body>
+</html>
+
+export GEMINI_API_KEY="your_api_key_here"
+
+mvn clean spring-boot:run
