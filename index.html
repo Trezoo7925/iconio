@@ -3306,5 +3306,204 @@
 })();
   </script>
 
+  <!-- ================= MOBILE COMPATIBILITY PATCH ================= -->
+  <style>
+    /* 1. Prevent horizontal scrollbars across the entire mobile view */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* 2. Disable custom cursor & floating tooltip on touchscreens (phones/tablets) */
+    @media (hover: none), (pointer: coarse), (max-width: 768px) {
+      #fluid-cursor,
+      #cursor-canvas,
+      .fan-tooltip {
+        display: none !important;
+      }
+    }
+
+    /* 3. Tablet & Mobile Adjustments (880px and below) */
+    @media (max-width: 880px) {
+      /* Functional Mobile Navigation Drawer */
+      .nav-inner {
+        position: relative;
+      }
+      .nav.menu-open .dot-links {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        width: 100%;
+        background: var(--bg-panel);
+        padding: 24px 0;
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--line);
+      }
+      .nav.menu-open .dot-links.left {
+        margin-top: 12px;
+      }
+      .nav.menu-open .dot-links.right {
+        border-top: none;
+        padding-top: 0;
+        padding-bottom: 28px;
+      }
+
+      /* Hamburger Icon X-Animation */
+      .nav-toggle span {
+        transition: transform 0.25s ease, opacity 0.25s ease;
+      }
+      .nav.menu-open .nav-toggle span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .nav.menu-open .nav-toggle span:nth-child(2) {
+        opacity: 0;
+      }
+      .nav.menu-open .nav-toggle span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+
+    /* 4. Phone Screen Layout & 5-Card Fan Fix (768px and below) */
+    @media (max-width: 768px) {
+      /* Hero Section adjustments */
+      .hero-stacked {
+        min-height: auto !important;
+        padding: 72px 0 64px !important;
+      }
+      .float-tag {
+        font-size: 0.72rem !important;
+        padding: 4px 10px !important;
+      }
+      .tag-left { top: 8% !important; left: 4% !important; }
+      .tag-right { top: 10% !important; right: 4% !important; }
+      .tag-boleft { top: auto !important; bottom: 8% !important; left: 6% !important; }
+      .tag-boright { top: auto !important; bottom: 10% !important; right: 6% !important; }
+      .stacked-cards-stage {
+        height: 40px !important;
+        margin-top: 20px !important;
+      }
+
+      /* 5-Card Fan: Convert to a clean vertical touch-deck on phones so it never overflows */
+      .service-fan-area {
+        min-height: 620px !important;
+        padding: 80px 0 60px !important;
+        overflow: hidden;
+      }
+      .service-fan-container {
+        width: 88vw !important;
+        max-width: 310px !important;
+        height: 220px !important;
+        transform: translateY(60px) !important;
+      }
+
+      /* When tapped/hovered on mobile, fan vertically & diagonally inside screen bounds */
+      .service-fan-container:hover .service-fan-card:nth-child(1),
+      .service-fan-container.mobile-active .service-fan-card:nth-child(1) {
+        transform: translate(-8%, -135px) rotate(-6deg) scale(0.95) !important;
+        filter: brightness(0.85) !important;
+      }
+      .service-fan-container:hover .service-fan-card:nth-child(2),
+      .service-fan-container.mobile-active .service-fan-card:nth-child(2) {
+        transform: translate(8%, -70px) rotate(4deg) scale(0.97) !important;
+        filter: brightness(0.9) !important;
+      }
+      .service-fan-container:hover .service-fan-card:nth-child(3),
+      .service-fan-container.mobile-active .service-fan-card:nth-child(3) {
+        transform: translate(-5%, 0px) rotate(-2deg) scale(1) !important;
+        filter: brightness(0.95) !important;
+      }
+      .service-fan-container:hover .service-fan-card:nth-child(4),
+      .service-fan-container.mobile-active .service-fan-card:nth-child(4) {
+        transform: translate(6%, 70px) rotate(5deg) scale(0.97) !important;
+        filter: brightness(0.9) !important;
+      }
+      .service-fan-container:hover .service-fan-card:nth-child(5),
+      .service-fan-container.mobile-active .service-fan-card:nth-child(5) {
+        transform: translate(-4%, 140px) rotate(-4deg) scale(0.95) !important;
+        filter: brightness(0.85) !important;
+      }
+
+      /* Tapping an individual card brings it to the front in Neon Green */
+      .service-fan-container .service-fan-card:active,
+      .service-fan-container .service-fan-card.card-focused {
+        background-color: var(--green) !important;
+        border-color: var(--green) !important;
+        color: #050505 !important;
+        filter: brightness(1) !important;
+        z-index: 30 !important;
+        transform: translate(0, 0) scale(1.05) rotate(0deg) !important;
+      }
+      .service-fan-container .service-fan-card:active .h-desc,
+      .service-fan-container .service-fan-card.card-focused .h-desc {
+        color: #050505 !important;
+      }
+
+      /* Section Spacing & Padding Fixes for Mobile */
+      .work, .statement, .work-features, .testimonials {
+        padding: 72px 0 !important;
+      }
+      .testimonials {
+        padding-bottom: 120px !important;
+      }
+      .numbers {
+        padding: 50px 0 !important;
+      }
+      .contact-page {
+        padding-top: 72px !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      // 1. Mobile Hamburger Menu Toggle
+      const nav = document.querySelector('.nav');
+      const toggleBtn = document.querySelector('.nav-toggle');
+      const navLinks = document.querySelectorAll('.dot-links a');
+
+      if (toggleBtn && nav) {
+        toggleBtn.addEventListener('click', function() {
+          nav.classList.toggle('menu-open');
+        });
+        // Close menu automatically when a link is tapped
+        navLinks.forEach(function(link) {
+          link.addEventListener('click', function() {
+            nav.classList.remove('menu-open');
+          });
+        });
+      }
+
+      // 2. Touch Support for 5-Card Service Fan on Mobile
+      const fanContainer = document.querySelector('.service-fan-container');
+      const fanCards = document.querySelectorAll('.service-fan-card');
+
+      if (fanContainer && fanCards.length) {
+        fanCards.forEach(function(card) {
+          card.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+              e.stopPropagation();
+              // First tap opens the fan; tapping a card highlights it
+              if (!fanContainer.classList.contains('mobile-active')) {
+                fanContainer.classList.add('mobile-active');
+              } else {
+                fanCards.forEach(function(c) { c.classList.remove('card-focused'); });
+                card.classList.add('card-focused');
+              }
+            }
+          });
+        });
+
+        // Tapping outside the cards folds the stack back together
+        document.addEventListener('click', function(e) {
+          if (window.innerWidth <= 768 && !fanContainer.contains(e.target)) {
+            fanContainer.classList.remove('mobile-active');
+            fanCards.forEach(function(c) { c.classList.remove('card-focused'); });
+          }
+        });
+      }
+    })();
+  </script>
+
 </body>
 </html>
