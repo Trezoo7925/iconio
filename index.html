@@ -2195,21 +2195,18 @@
 
   .contact-social a:hover{ color:var(--cp-text); }
 
-  .contact-talk{
-    display:flex;
+.contact-talk{
+    display:inline-flex;
     align-items:center;
     gap:14px;
     text-decoration:none;
     color:#0c0c1f;
     font-family:'Fraunces', serif;
     font-weight:500;
-    font-size:clamp(3rem, 8vw, 6.4rem);
+    font-size:clamp(2.4rem, 4.5vw, 4rem);
     line-height:1;
-    margin:150px auto 0;
-    max-width:var(--max);
-    padding:0 32px;
-    width:100%;
-    box-sizing:border-box;
+    margin:40px 0 0 0;
+    padding:0;
     transition:gap 0.25s ease, color 0.25s ease;
   }
 
@@ -2882,10 +2879,11 @@
       </div>
     </div>
 
-    <a href="mailto:iconioin@gmail.com" class="contact-talk">
-      Let's talk
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
-    </a>
+<!-- Moved Let's talk right below social icons -->
+          <a href="mailto:iconioin@gmail.com" class="contact-talk">
+            Let's talk
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+          </a>
 
     <nav class="contact-footer-nav">
       <a href="index.html">Home</a>
@@ -3501,6 +3499,24 @@
             fanCards.forEach(function(c) { c.classList.remove('card-focused'); });
           }
         });
+      }
+    })();
+  </script>
+
+<!-- ================= MOVE "LET'S TALK" BELOW SOCIAL ICONS ================= -->
+  <style>
+    .contact-info .contact-talk {
+      margin: 40px 0 0 0 !important;
+      padding: 0 !important;
+      font-size: clamp(2.4rem, 4.5vw, 4rem) !important;
+    }
+  </style>
+  <script>
+    (function() {
+      const talkLink = document.querySelector('.contact-talk');
+      const socialBlock = document.querySelector('.contact-social');
+      if (talkLink && socialBlock) {
+        socialBlock.insertAdjacentElement('afterend', talkLink);
       }
     })();
   </script>
