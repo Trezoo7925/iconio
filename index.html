@@ -2379,6 +2379,79 @@
 </head>
 <body>
 
+<!-- ================= FLUID COMET CURSOR ================= -->
+  <script>
+    (function() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Inject canvas into the DOM
+      canvas.id = 'fluid-cursor';
+      document.body.appendChild(canvas);
+
+      // Lock it to the screen and prevent it from blocking clicks
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '9999999';
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      // Track mouse
+      const mouse = { x: width / 2, y: height / 2 };
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      // Create the trail chain
+      const dots = [];
+      const numDots = 24; // Length of the tail
+      for (let i = 0; i < numDots; i++) {
+        dots.push({ x: mouse.x, y: mouse.y });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        // The head of the chain follows the actual mouse
+        let targetX = mouse.x;
+        let targetY = mouse.y;
+        
+        dots.forEach((dot, index) => {
+          // Each dot smoothly follows the coordinates of the dot ahead of it
+          dot.x += (targetX - dot.x) * 0.4; // 0.4 is the spring stiffness
+          dot.y += (targetY - dot.y) * 0.4;
+          
+          ctx.beginPath();
+          // Taper the radius based on position in the chain
+          const radius = Math.max(0, (numDots - index) / numDots * 10); 
+          ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
+          
+          // Set to Iconio Green to contrast the dark background
+          ctx.fillStyle = '#00ff00';
+          ctx.fill();
+          
+          // Update target for the next dot in the loop
+          targetX = dot.x;
+          targetY = dot.y;
+        });
+        
+        requestAnimationFrame(animate);
+      }
+      
+      animate();
+    })();
+  </script>
   <!-- ================= NAV ================= -->
   <header class="nav">
     <div class="nav-inner">
