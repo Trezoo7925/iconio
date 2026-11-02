@@ -968,73 +968,122 @@
     margin:0;
   }
 
-  /* ---------- HIGHLIGHT CARDS UI ---------- */
-  .highlight-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 170px;
-    gap: 16px;
-    padding-bottom: 60px;
+/* ---------- 5-CARD SERVICE FAN EFFECT (CENTERED & DARK THEME) ---------- */
+  .service-fan-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+    width: 100%; /* Forces the wrapper to full width for perfect centering */
+    position: relative;
+    padding: 60px 0;
   }
 
-  .h-card {
+  .service-fan-container {
     position: relative;
+    width: 320px;
+    height: 240px;
+    margin: 0 auto; /* Forces horizontal centering */
+    cursor: pointer;
+    perspective: 1200px;
+    transform: translateY(40px); /* Pushes the container down slightly to visually center the upward stack */
+  }
+
+  .service-fan-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border-radius: 20px;
-    padding: 24px;
+    padding: 32px;
+    
+    /* Perfect Inner Centering */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    color: #ffffff;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    transform-origin: center bottom;
+
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                filter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
   }
 
-  .h-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+  /* Overriding leftover margins from your original text classes */
+  .service-fan-card .h-title {
+    margin: 0 0 12px 0 !important;
+    font-size: 1.6rem;
+    line-height: 1.2;
   }
 
-  /* Grid Placements */
-  .h-card-sm {
-    grid-column: span 1;
-    grid-row: span 1;
-  }
-  .h-card-lg {
-    grid-column: span 2;
-    grid-row: span 2;
+  .service-fan-card .h-desc {
+    margin: 0 !important;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
   }
 
-  /* Abstract background patterns mimicking the image */
-  .h-card-bg-pattern {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.15;
-    pointer-events: none;
-  }
-  .pattern-red { background: radial-gradient(circle at 80% 20%, #fff 2%, transparent 40%); }
-  .pattern-green { background: repeating-linear-gradient(45deg, transparent, transparent 10px, #fff 10px, #fff 12px); opacity: 0.08;}
-  .pattern-orange { background: radial-gradient(ellipse at 50% 50%, transparent 20%, #fff 150%); opacity: 0.2;}
-  .pattern-pink { background: radial-gradient(circle at 10% 90%, #fff 0%, transparent 60%); }
-  .pattern-blue { background: repeating-radial-gradient(circle at 100% 100%, transparent, transparent 20px, #fff 21px, transparent 22px); opacity: 0.1;}
-  .pattern-purple { background: repeating-linear-gradient(75deg, transparent, transparent 8px, #fff 8px, #fff 10px); opacity: 0.08;}
-
-  .h-card-top, .h-card-bottom {
-    position: relative;
-    z-index: 1;
+  /* Neon Green Hover State */
+  .service-fan-container:hover .service-fan-card:hover {
+    background-color: var(--green);
+    border-color: var(--green);
+    color: #050505;
   }
 
-  .h-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+  .service-fan-container:hover .service-fan-card:hover .h-desc {
+    color: #050505;
+    opacity: 0.85;
   }
 
-  .h-category {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    opacity: 0.9;
+  /* Default Stacked Transforms */
+  .service-fan-card:nth-child(1) { z-index: 5; transform: translateY(0) scale(1); filter: brightness(1); }
+  .service-fan-card:nth-child(2) { z-index: 4; transform: translateY(-20px) scale(0.96); filter: brightness(0.8); }
+  .service-fan-card:nth-child(3) { z-index: 3; transform: translateY(-40px) scale(0.92); filter: brightness(0.6); }
+  .service-fan-card:nth-child(4) { z-index: 2; transform: translateY(-60px) scale(0.88); filter: brightness(0.4); }
+  .service-fan-card:nth-child(5) { z-index: 1; transform: translateY(-80px) scale(0.84); filter: brightness(0.2); }
+
+  /* Container Hover (Fan Out) */
+  .service-fan-container:hover .service-fan-card:nth-child(1) { transform: translateX(-120%) rotate(-20deg); filter: brightness(0.7); }
+  .service-fan-container:hover .service-fan-card:nth-child(2) { transform: translateX(-60%) rotate(-10deg); filter: brightness(0.7); }
+  .service-fan-container:hover .service-fan-card:nth-child(3) { transform: translateX(0) rotate(0deg); filter: brightness(0.7); }
+  .service-fan-container:hover .service-fan-card:nth-child(4) { transform: translateX(60%) rotate(10deg); filter: brightness(0.7); }
+  .service-fan-container:hover .service-fan-card:nth-child(5) { transform: translateX(120%) rotate(20deg); filter: brightness(0.7); }
+
+  /* Direct Hover (Lift up) */
+  .service-fan-container:hover .service-fan-card:nth-child(1):hover { transform: translateX(-120%) translateY(-20px) rotate(-20deg) scale(1.05); filter: brightness(1); z-index: 10; }
+  .service-fan-container:hover .service-fan-card:nth-child(2):hover { transform: translateX(-60%) translateY(-20px) rotate(-10deg) scale(1.05); filter: brightness(1); z-index: 10; }
+  .service-fan-container:hover .service-fan-card:nth-child(3):hover { transform: translateX(0) translateY(-20px) rotate(0deg) scale(1.05); filter: brightness(1); z-index: 10; }
+  .service-fan-container:hover .service-fan-card:nth-child(4):hover { transform: translateX(60%) translateY(-20px) rotate(10deg) scale(1.05); filter: brightness(1); z-index: 10; }
+  .service-fan-container:hover .service-fan-card:nth-child(5):hover { transform: translateX(120%) translateY(-20px) rotate(20deg) scale(1.05); filter: brightness(1); z-index: 10; }
+
+  /* Tooltip */
+  .fan-tooltip {
+    position: absolute; background: #ffffff; color: #050505; padding: 8px 16px; border-radius: 100px;
+    font-size: 0.85rem; font-weight: 600; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;
+    z-index: 9999; transform: translate(-50%, -100%); box-shadow: 0 4px 12px rgba(0,0,0,0.2); white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .service-fan-container:hover .service-fan-card:nth-child(1) { transform: translateX(-80%) rotate(-16deg); }
+    .service-fan-container:hover .service-fan-card:nth-child(2) { transform: translateX(-40%) rotate(-8deg); }
+    .service-fan-container:hover .service-fan-card:nth-child(4) { transform: translateX(40%) rotate(8deg); }
+    .service-fan-container:hover .service-fan-card:nth-child(5) { transform: translateX(80%) rotate(16deg); }
+    
+    .service-fan-container:hover .service-fan-card:nth-child(1):hover { transform: translateX(-80%) translateY(-15px) rotate(-16deg) scale(1.05); }
+    .service-fan-container:hover .service-fan-card:nth-child(2):hover { transform: translateX(-40%) translateY(-15px) rotate(-8deg) scale(1.05); }
+    .service-fan-container:hover .service-fan-card:nth-child(4):hover { transform: translateX(40%) translateY(-15px) rotate(8deg) scale(1.05); }
+    .service-fan-container:hover .service-fan-card:nth-child(5):hover { transform: translateX(80%) translateY(-15px) rotate(16deg) scale(1.05); }
   }
 
   /* Scalloped badge simulation */
@@ -2526,110 +2575,56 @@
           <h2 class="section-title">Our Core Services</h2>
         </div>
       </div>
+<div class="service-fan-container">
+          <!-- Card 1 -->
+          <div class="service-fan-card" data-label="01 Brand Identity">
+            <div style="margin-bottom: 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12l2-2m0 0l-2-2m2 2H5m0 0l2-2m-2 2l2 2"/></svg>
+            </div>
+            <h3 class="h-title lg-text">Branding & Rebranding</h3>
+            <p class="h-desc lg-desc">Build a new brand or transform an existing one.</p>
+          </div>
 
-      <div class="highlight-grid">
-        <!-- Card 1: Small -->
-        <div class="h-card h-card-sm" style="background-color: #D36C6C;">
-          <div class="h-card-bg-pattern pattern-red"></div>
-          <div class="h-card-top">
-            <span class="h-category">Brand Identity</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D36C6C" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12l2-2m0 0l-2-2m2 2H5m0 0l2-2m-2 2l2 2"/></svg>
+          <!-- Card 2 -->
+          <div class="service-fan-card" data-label="02 Social Creative">
+            <div style="margin-bottom: 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
             </div>
+            <h3 class="h-title lg-text">Social Media Design</h3>
+            <p class="h-desc lg-desc">Consistent, high-quality content that makes brands active.</p>
           </div>
-          <div class="h-card-bottom">
-            <h3 class="h-title">Branding & Rebranding</h3>
-            <p class="h-desc">Build a new brand or transform an existing one.</p>
-            <div class="h-stats">
-            </div>
-          </div>
-        </div>
 
-        <!-- Card 2: Small -->
-        <div class="h-card h-card-sm" style="background-color: #3B927B;">
-          <div class="h-card-bg-pattern pattern-green"></div>
-          <div class="h-card-top">
-            <span class="h-category">Social Creative</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B927B" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          <!-- Card 3 -->
+          <div class="service-fan-card" data-label="03 Ad Campaigns">
+            <div style="margin-bottom: 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
             </div>
+            <h3 class="h-title lg-text">Performance Creative</h3>
+            <p class="h-desc lg-desc">Design focused on attention, engagement and conversions.</p>
           </div>
-          <div class="h-card-bottom">
-            <h3 class="h-title">Social Media Design</h3>
-            <p class="h-desc">Create consistent, high-quality content that makes brands look active and professional.</p>
-            <div class="h-stats">
-            </div>
-          </div>
-        </div>
 
-        <!-- Card 3: Large (Spans 2 columns & 2 rows) -->
-        <div class="h-card h-card-lg" style="background-color: #DA8536;">
-          <div class="h-card-bg-pattern pattern-orange"></div>
-          <div class="h-card-top">
-            <span class="h-category">Ad Campaigns</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DA8536" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <!-- Card 4 -->
+          <div class="service-fan-card" data-label="04 Web & UI">
+            <div style="margin-bottom: 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
-          </div>
-          <div class="h-card-bottom">
-            <h3 class="h-title lg-text">Advertising & Performance Creative</h3>
-            <p class="h-desc lg-desc">Design ads and creative assets focused on attention, engagement and conversions.</p>
-            <div class="h-stats">
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 4: Large (Spans 2 columns & 2 rows) -->
-        <div class="h-card h-card-lg" style="background-color: #D765A2;">
-          <div class="h-card-bg-pattern pattern-pink"></div>
-          <div class="h-card-top">
-            <span class="h-category">Web & UI</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D765A2" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
-          </div>
-          <div class="h-card-bottom">
             <h3 class="h-title lg-text">Website & Landing Pages</h3>
-            <p class="h-desc lg-desc">Design modern websites and landing pages that turn visitors into customers.</p>
-            <div class="h-stats">
-            </div>
+            <p class="h-desc lg-desc">Design modern websites that turn visitors into customers.</p>
           </div>
-        </div>
 
-        <!-- Card 5: Small -->
-        <div class="h-card h-card-sm" style="background-color: #5875DF;">
-          <div class="h-card-bg-pattern pattern-blue"></div>
-          <div class="h-card-top">
-            <span class="h-category">Visual Content</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5875DF" stroke-width="2"><path d="M12 2v20m-7-7h14m-14-6h14"/></svg>
+          <!-- Card 5 -->
+          <div class="service-fan-card" data-label="05 Visual Content">
+            <div style="margin-bottom: 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20m-7-7h14m-14-6h14"/></svg>
             </div>
+            <h3 class="h-title lg-text">Content Production</h3>
+            <p class="h-desc lg-desc">Produce graphics, motion, video, and campaign content.</p>
           </div>
-          <div class="h-card-bottom">
-            <h3 class="h-title">Content Production</h3>
-            <p class="h-desc">Produce graphics, motion, video, product visuals and campaign content for brands.</p>
-            <div class="h-stats">
-            </div>
-          </div>
-        </div>
 
-        <!-- Card 6: Small -->
-        <div class="h-card h-card-sm" style="background-color: #795CE0;">
-          <div class="h-card-bg-pattern pattern-purple"></div>
-          <div class="h-card-top">
-            <span class="h-category">Design Systems</span>
-            <div class="h-badge">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#795CE0" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4l3 3"/></svg>
-            </div>
-          </div>
-          <div class="h-card-bottom">
-            <h3 class="h-title">Marketing Design Systems</h3>
-            <p class="h-desc">Reusable creative systems for rapid, consistent brand communication.</p>
-            <div class="h-stats">
-            </div>
-          </div>
+        </div>
         </div>
       </div>
+      
     </div>
   </section>
 
@@ -3236,6 +3231,31 @@
             overlay.classList.remove('active');
             animating = false;
           }, 1500);
+        });
+      });
+    })();
+
+    <!-- ================= FAN CARD TOOLTIP LOGIC ================= -->
+    (function() {
+      const cards = document.querySelectorAll('.service-fan-card');
+      const tooltip = document.getElementById('fanTooltip');
+
+      if (!cards.length || !tooltip) return;
+
+      cards.forEach(card => {
+        // Show and move tooltip over the hovered card
+        card.addEventListener('mousemove', (e) => {
+          tooltip.style.opacity = '1';
+          tooltip.textContent = card.getAttribute('data-label');
+          
+          // Position it slightly above the cursor
+          tooltip.style.left = e.pageX + 'px';
+          tooltip.style.top = (e.pageY - 24) + 'px';
+        });
+
+        // Hide tooltip when leaving the card
+        card.addEventListener('mouseleave', () => {
+          tooltip.style.opacity = '0';
         });
       });
     })();
